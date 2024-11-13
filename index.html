@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <h1>Login with Email</h1>
+    <form id="emailForm">
+        <label for="email">Enter your email:</label>
+        <input type="email" id="email" required>
+        <button type="submit">Send Magic Link</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAeVZJfIEdcfO0RQw9lhLBjHeyNFhp-N2g",
+            authDomain: "noting-stuff.firebaseapp.com",
+            databaseURL: "https://noting-stuff-default-rtdb.firebaseio.com",
+            projectId: "noting-stuff",
+            storageBucket: "noting-stuff.firebasestorage.app",
+            messagingSenderId: "485126521824",
+            appId: "1:485126521824:web:52eab6bcd403507c5aa185",
+            measurementId: "G-6MSRNB75LK"
+          };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Get form elements
+        const emailForm = document.getElementById("emailForm");
+        const emailInput = document.getElementById("email");
+        const messageDiv = document.getElementById("message");
+
+        // Handle form submission
+        emailForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value;
+
+            const actionCodeSettings = {
+                url: "https://yourwebsite.com/welcome",  // The page the user is redirected to after clicking the magic link
+                handleCodeInApp: true,
+            };
+
+            auth.sendSignInLinkToEmail(email, actionCodeSettings)
+                .then(() => {
+                    // Save the email locally to complete sign-in when the user returns
+                    localStorage.setItem("emailForSignIn", email);
+                    messageDiv.textContent = `Check your inbox for a magic link, ${email}!`;
+                })
+                .catch((error) => {
+                    messageDiv.textContent = error.message;
+                });
+        });
+    </script>
+</body>
+</html>
